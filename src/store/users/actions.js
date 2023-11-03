@@ -1,7 +1,9 @@
 import usersBack from "@/api/usersApi"
+import rolesBack from "@/api/rolesApi"
+import usersRolesBack from "@/api/usersRolesApi"
 
 export const getAllUsers = async ({commit}, page) => {
-  const { data } = await usersBack.get(`/usersRoles?page=${page || 1}`,{
+  const { data } = await usersRolesBack.get(`/usersRoles?page=${page || 1}`,{
     headers: {
       'Authorization': sessionStorage.getItem('token')
     }
@@ -15,7 +17,7 @@ export const getAllUsers = async ({commit}, page) => {
 }
 
 export const getAllRoles = async ({commit}) => {
-  const { data } = await usersBack.get('/roles', {
+  const { data } = await rolesBack.get('/roles', {
     headers: {
       'Authorization': sessionStorage.getItem('token')
     }
@@ -28,7 +30,7 @@ export const getAllRoles = async ({commit}) => {
 }
 
 export const createRoleAction = async ({commit}, data) => {
-  const res = await usersBack.post('/roles', data, {
+  const res = await rolesBack.post('/roles', data, {
     headers: {
       'Authorization': sessionStorage.getItem('token')
     }
@@ -48,7 +50,7 @@ export const createUserRole = async ({commit}, data) => {
     userId: resp.data.id,
     roleId: role
   }
-  const {userRole} = await usersBack.post('/userRoles', payload, {
+  const {userRole} = await usersRolesBack.post('/userRoles', payload, {
     headers: {
       'Authorization': sessionStorage.getItem('token')
     }
@@ -59,7 +61,7 @@ export const createUserRole = async ({commit}, data) => {
 
 export const updatedUserRole = async ({commit}, userRole) => {
   const {userId, role} = userRole 
-  const {data} = await usersBack.put('/userRoles', {userId, roleIds: role}, {
+  const {data} = await usersRolesBack.put('/userRoles', {userId, roleIds: role}, {
     headers: {
       'Authorization': sessionStorage.getItem('token')
     }
@@ -85,7 +87,7 @@ export const updatedUser = async ({commit}, data) => {
 
 export const getSingleUserEdit = async ({commit}, idUser) => {
   try {
-    const data = await usersBack.get(`/usersRoles/${idUser}`, {
+    const data = await usersRolesBack.get(`/usersRoles/${idUser}`, {
       headers: {
         'Authorization': sessionStorage.getItem('token')
       }
