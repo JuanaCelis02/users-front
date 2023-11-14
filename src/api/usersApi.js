@@ -2,7 +2,7 @@ import axios from "axios"
 
 const usersBack = axios.create({
   // baseURL: 'http://localhost:4000'
-  baseURL: 'https://users-restapi-w3antys34q-uc.a.run.app'
+  baseURL: 'https://apimanagementprincipal.azure-api.net/user'
 })
 
 export default usersBack
