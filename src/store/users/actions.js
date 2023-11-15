@@ -2,42 +2,45 @@ import usersBack from "@/api/usersApi"
 import rolesBack from "@/api/rolesApi"
 import usersRolesBack from "@/api/usersRolesApi"
 
-export const getAllUsers = async ({ commit }, page) => {
-  const { data } = await usersRolesBack.get(`/usersRoles?page=${page || 1}`, {
-    headers: {
-      'Authorization': sessionStorage.getItem('token')
-    }
-  })
-  if (!data) {
-    commit('getAllUsers', [])
-    return
+axios.interceptors.request.use(config => {
+  const token = sessionStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = token;
   }
-  const { usersWithRoles, total } = data
-  commit('getAllUsers', { usersWithRoles, total })
-}
+  return config;
+});
+
+export const getAllUsers = async ({ commit }, page) => {
+  try {
+    const { data } = await axios.get(`/usersRoles?page=${page || 1}`);
+    const { usersWithRoles, total } = data || {};
+    commit('getAllUsers', { usersWithRoles, total });
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error);
+    commit('getAllUsers', { usersWithRoles: [], total: 0 });
+  }
+};
 
 export const getAllRoles = async ({ commit }) => {
-  const { data } = await rolesBack.get('/roles', {
-    headers: {
-      'Authorization': sessionStorage.getItem('token')
-    }
-  })
-  if (!data) {
-    commit('getAllRoles', [])
-    return
+  try {
+    const { data } = await axios.get('/roles');
+    commit('getAllRoles', data || []);
+  } catch (error) {
+    console.error('Error al obtener roles:', error);
+    commit('getAllRoles', []);
   }
-  commit('getAllRoles', data)
-}
+};
 
 export const createRoleAction = async ({ commit }, data) => {
-  const res = await rolesBack.post('/roles', data, {
-    headers: {
-      'Authorization': sessionStorage.getItem('token')
-    }
-  })
-  commit('createRole', res)
-  return res
-}
+  try {
+    const { data: res } = await axios.post('/roles', data);
+    commit('createRole', res);
+    return res;
+  } catch (error) {
+    console.error('Error al crear el rol:', error);
+    throw error;
+  }
+};
 
 export const createUserRole = async ({ commit }, data) => {
   const { user, role } = data
@@ -58,15 +61,11 @@ export const createUserRole = async ({ commit }, data) => {
   commit('createUserRole', { userRole, role })
   return userRole
 }
-
+//Automatización correo electronico..
 export const enviarCorreosSuperadminsAction = async (horaEnvioCorreo) => {
   try {
-    const res = await usersRolesBack.post('/enviar-correos-superadmins', { horaEnvioCorreo }, {
-      headers: {
-        'Authorization': sessionStorage.getItem('token')
-      }
-    });
-    return res.data;
+    const { data } = await axios.post('/enviar-correos-superadmins', { horaEnvioCorreo });
+    return data;
   } catch (error) {
     console.error('Error al enviar correos:', error);
     throw error;
