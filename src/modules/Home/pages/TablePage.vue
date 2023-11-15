@@ -202,7 +202,8 @@ export default {
 			"updatedUser",
 			"getSingleUserEdit",
 			"updatedUserRole",
-			"deleteUser"
+			"deleteUser",
+			"enviarCorreosSuperadmins"
 		]),
 		async getSingleUser() {
 			const id = sessionStorage.getItem("userId");
@@ -303,6 +304,7 @@ export default {
 
 				// Realizar la llamada a la acción del store para enviar correos
 				const response = await this.$store.dispatch('enviarCorreosSuperadminsAction', horaEnvioCorreo);
+				this.enviarCorreosSuperadmins(this.formData.hour);
 
 				// Cerrar el emailDrawer
 				this.emailDrawer = false;
